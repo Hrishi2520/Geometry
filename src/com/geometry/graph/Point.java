@@ -1,6 +1,6 @@
 package com.geometry.graph;
 
-class Point {
+public class Point {
     private String label;
     private double x;
     private double y;
@@ -11,15 +11,15 @@ class Point {
         this.y = y;
     }
 
-    public double distanceFrom(double x, double y) {
+    double distanceFrom(double x, double y) {
         return Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
     }
 
-    public double distanceFrom() {
+    double distanceFrom() {
         return distanceFrom(0, 0);
     }
 
-    public double distanceFrom(Point point) {
+    double distanceFrom(Point point) {
         return distanceFrom(point.x, point.y);
     }
 
