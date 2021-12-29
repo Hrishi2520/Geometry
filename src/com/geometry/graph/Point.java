@@ -6,15 +6,9 @@ class Point {
     private double y;
 
     Point(double x, double y, String label) {
-        Point newPoint = new Point(x, y, label);
-        System.out.printf("Successfully created %s\n", newPoint);
-        //  TODO: Associate the point with a quadrant
-    }
-
-    Point(double x, double y) {
-        //  TODO: Implement a logic to generate unique labels
-        this(x, y, "Unnamed");
-        //  TODO: Associate the point with a quadrant
+        this.label = label;
+        this.x = x;
+        this.y = y;
     }
 
     public double distanceFrom(double x, double y) {
