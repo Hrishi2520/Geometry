@@ -18,6 +18,6 @@ public final class Range {
     }
 
     public boolean inRange(double element) {
-        return (start <= element && end >= element);
+        return (start < element && end > element);
     }
 }

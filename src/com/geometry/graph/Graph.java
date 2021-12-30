@@ -6,10 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Graph {
-    private static final Quadrant FIRST = new Quadrant("first", new Range(0, Integer.MAX_VALUE), new Range(0, Integer.MAX_VALUE));
-    private static final Quadrant SECOND = new Quadrant("second", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MAX_VALUE, 0));
-    private static final Quadrant THIRD = new Quadrant("third", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MIN_VALUE, 0));
-    private static final Quadrant FOURTH = new Quadrant("fourth", new Range(0, Integer.MAX_VALUE), new Range(Integer.MIN_VALUE, 0));
+    private static final Container FIRST_QUADRANT = new Quadrant("first", new Range(0, Integer.MAX_VALUE), new Range(0, Integer.MAX_VALUE));
+    private static final Container SECOND_QUADRANT = new Quadrant("second", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MAX_VALUE, 0));
+    private static final Container THIRD_QUADRANT = new Quadrant("third", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MIN_VALUE, 0));
+    private static final Container FOURTH_QUADRANT = new Quadrant("fourth", new Range(0, Integer.MAX_VALUE), new Range(Integer.MIN_VALUE, 0));
+    private static final Container X_AXIS = new Axis("X", new Range(Integer.MIN_VALUE, Integer.MAX_VALUE));
+    private static final Container Y_AXIS = new Axis("Y", new Range(Integer.MIN_VALUE, Integer.MAX_VALUE));
     private String label;
     private final List<Point> points;
 
@@ -20,11 +22,11 @@ public class Graph {
 
     public Point addPoint(double x, double y, String label) {
         Point newPoint = new Point(x, y, label);
-        Quadrant container = findQuadrant(newPoint);
-        if (container.checkIfUnique(newPoint)) {
+        Container container = findContainer(newPoint);
+        if (!container.checkIfExits(newPoint)) {
             container.points.add(newPoint);
             points.add(newPoint);
-            System.out.printf("Successfully added %s in %s-Quadrant\n", newPoint, container);
+            System.out.printf("Successfully added %s in %s\n", newPoint, container);
             return newPoint;
         }
 
@@ -36,12 +38,21 @@ public class Graph {
         return addPoint(x, y, String.format("unnamed_%d", getPoints().size()));
     }
 
-    private Quadrant findQuadrant(Point newPoint) {
-        Quadrant found;
-        if (FIRST.rangeX.inRange(newPoint.getX()) && FIRST.rangeY.inRange(newPoint.getY())) found = FIRST;
-        else if (SECOND.rangeX.inRange(newPoint.getX()) && SECOND.rangeY.inRange(newPoint.getY())) found = SECOND;
-        else if (THIRD.rangeX.inRange(newPoint.getX()) && THIRD.rangeY.inRange(newPoint.getY())) found = THIRD;
-        else found = FOURTH;
+    private Container findContainer(Point point) {
+        Container found = null;
+        if (FIRST_QUADRANT.inRange(point))
+            found = FIRST_QUADRANT;
+        else if (SECOND_QUADRANT.inRange(point))
+            found = SECOND_QUADRANT;
+        else if (THIRD_QUADRANT.inRange(point))
+            found = THIRD_QUADRANT;
+        else if (FOURTH_QUADRANT.inRange(point))
+            found = FOURTH_QUADRANT;
+        else if (X_AXIS.inRange(point))
+            found = X_AXIS;
+        else if (Y_AXIS.inRange(point))
+            found = Y_AXIS;
+
         return found;
     }
 
@@ -80,9 +91,9 @@ public class Graph {
         Point found = findPoint(point);
         if (found != null) {
             points.remove(found);
-            Quadrant container = findQuadrant(found);
+            Container container = findContainer(found);
             container.points.remove(found);
-            System.out.printf("Successfully removed %s from %s-Quadrant\n", found, container);
+            System.out.printf("Successfully removed %s from %s\n", found, container);
 
         }
         return found;
