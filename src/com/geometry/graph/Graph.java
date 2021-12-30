@@ -67,23 +67,18 @@ public class Graph {
         return points.contains(point) ? point : null;
     }
 
-    public Point pop(String label) {
-        points.remove(findPoint(label));
-        return null;
-    }
-
-    public Point pop(double x, double y) {
-        points.remove(findPoint(x,y));
-        return null;
-    }
-
-    public Point pop(Point point) {
-        points.remove(findPoint(point));
-        return null;
+    Point pop(Point point) {
+        Point found = findPoint(point);
+        if (found != null) {
+            points.remove(found);
+            findQuadrant(found).points.remove(found);
+        }
+        return found;
     }
 
     public boolean removePoint(String label) {
-        return pop(label) != null;
+        Point found = findPoint(label);
+        return pop(found) != null;
     }
 
     public boolean removePoint(Point point) {
@@ -91,7 +86,8 @@ public class Graph {
     }
 
     public boolean removePoint(double x, double y) {
-        return pop(x, y) != null;
+        Point found = findPoint(x, y);
+        return pop(found) != null;
     }
 
     public double distanceBetween(double x1, double y1, double x2, double y2) {
