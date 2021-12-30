@@ -2,39 +2,25 @@ package com.geometry.graph;
 
 import com.geometry.utils.Range;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Locale;
 
-final class Quadrant {
-    final String label;
-    List<Point> points;
+final class Quadrant extends Container {
     final Range rangeX;
     final Range rangeY;
 
     Quadrant(String label, Range rangeX, Range rangeY) {
-        this.label = label;
+        super(label.toUpperCase(Locale.ROOT));
         this.rangeX = rangeX;
         this.rangeY = rangeY;
-        this.points = new LinkedList<>();
-    }
-
-    public boolean checkIfUnique(Point point) {
-        for(Point p: points) {
-            if (p.getLabel().equals(point.getLabel())) {
-                System.out.printf("Found %s with same label as %s\n", point, p);
-                return false;
-            }
-
-            if (p.getX() == point.getX() && p.getY() == point.getY()) {
-                System.out.printf("Found %s with same co-ordinates as %s\n", point, p);
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
     public String toString() {
-        return String.format("%s", label);
+        return String.format("%s-Quadrant", label);
+    }
+
+    @Override
+    boolean inRange(Point point) {
+        return rangeX.inRange(point.getX()) && rangeY.inRange(point.getY());
     }
 }
