@@ -4,8 +4,10 @@ import com.geometry.utils.Range;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class Graph {
+    public static final Point origin = new Point(0,0,"origin");
     private static final Container FIRST_QUADRANT = new Quadrant("first", new Range(0, Integer.MAX_VALUE), new Range(0, Integer.MAX_VALUE));
     private static final Container SECOND_QUADRANT = new Quadrant("second", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MAX_VALUE, 0));
     private static final Container THIRD_QUADRANT = new Quadrant("third", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MIN_VALUE, 0));
@@ -18,9 +20,15 @@ public class Graph {
     public Graph(String label) {
         this.label = label;
         points = new LinkedList<>();
+        points.add(origin);
     }
 
     public Point addPoint(double x, double y, String label) {
+        if ((x == 0 && y == 0) || label.toLowerCase(Locale.ROOT).equals(origin.getLabel())) {
+            System.out.print("Cannot re-create origin! Already added at initialization.\n");
+            return null;
+        }
+
         Point newPoint = new Point(x, y, label);
         Container container = findContainer(newPoint);
         if (!container.checkIfExits(newPoint)) {
@@ -56,6 +64,7 @@ public class Graph {
         return found;
     }
 
+
     public Point findPoint(double x, double y) {
         for (Point p : points) {
             if (p.getX() == x && p.getY() == y)
@@ -81,10 +90,12 @@ public class Graph {
     public Point movePoint(double x, double y, double newX, double newY) {
         Point found = findPoint(x, y);
         if (found != null) {
-            removePoint(x, y);
+            removePoint(found);
+            findContainer(found).points.remove(found);
             return addPoint(newX, newY, found.getLabel());
         }
-        return addPoint(newX, newY);
+
+        return null;
     }
 
     Point pop(Point point) {
