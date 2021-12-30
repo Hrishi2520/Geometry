@@ -24,7 +24,7 @@ public class Graph {
         if (container.checkIfUnique(newPoint)) {
             container.points.add(newPoint);
             points.add(newPoint);
-            System.out.printf("Successfully created %s in %s-Quadrant\n", newPoint, container);
+            System.out.printf("Successfully added %s in %s-Quadrant\n", newPoint, container);
             return newPoint;
         }
 
@@ -67,11 +67,23 @@ public class Graph {
         return points.contains(point) ? point : null;
     }
 
+    public Point movePoint(double x, double y, double newX, double newY) {
+        Point found = findPoint(x, y);
+        if (found != null) {
+            removePoint(x, y);
+            return addPoint(newX, newY, found.getLabel());
+        }
+        return addPoint(newX, newY);
+    }
+
     Point pop(Point point) {
         Point found = findPoint(point);
         if (found != null) {
             points.remove(found);
-            findQuadrant(found).points.remove(found);
+            Quadrant container = findQuadrant(found);
+            container.points.remove(found);
+            System.out.printf("Successfully removed %s from %s-Quadrant\n", found, container);
+
         }
         return found;
     }

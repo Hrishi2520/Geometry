@@ -7,7 +7,10 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-        Graph salary = new Graph("Salary");
-        
+        Graph friends = new Graph("friends");
+        Point ketan = friends.addPoint(5, 34, "ketan");
+        Point hrishi = friends.addPoint(0, 0, "hrishi");
+        System.out.printf("Distance between %s and %s is %.2f units\n", ketan, hrishi, friends.distanceBetween(ketan, hrishi));
+        friends.movePoint(hrishi.getX(), hrishi.getY(), 5, 33);
     }
 }
