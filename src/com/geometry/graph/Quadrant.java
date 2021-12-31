@@ -2,14 +2,12 @@ package com.geometry.graph;
 
 import com.geometry.utils.Range;
 
-import java.util.Locale;
-
 final class Quadrant extends Container {
     final Range rangeX;
     final Range rangeY;
 
-    Quadrant(String label, Range rangeX, Range rangeY) {
-        super(label.toUpperCase(Locale.ROOT));
+    Quadrant(ContainerLabel label, Range rangeX, Range rangeY) {
+        super(label);
         this.rangeX = rangeX;
         this.rangeY = rangeY;
     }

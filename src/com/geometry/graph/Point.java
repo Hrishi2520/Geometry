@@ -11,16 +11,12 @@ public class Point {
         this.y = y;
     }
 
-    double distanceFrom(double x, double y) {
+    public double distanceFrom(double x, double y) {
         return Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
     }
 
-    double distanceFrom() {
-        return distanceFrom(0, 0);
-    }
-
-    double distanceFrom(Point point) {
-        return distanceFrom(point.x, point.y);
+    public double distanceFrom(Point point) {
+        return distanceFrom(point.getX(), point.getY());
     }
 
     public String getLabel() {

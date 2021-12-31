@@ -4,15 +4,42 @@ import java.util.LinkedList;
 import java.util.List;
 
 abstract class Container {
-    final String label;
+    final ContainerLabel label;
     List<Point> points;
 
-    Container(String label) {
+    Container(ContainerLabel label) {
         this.label = label;
         this.points = new LinkedList<>();
     }
 
+    boolean add(Point candidate) {
+        if (find(candidate) || !inRange(candidate)) return false;
+        System.out.printf("Adding point %s in %s\n", candidate, label);
+        return points.add(candidate);
+    }
+
+    boolean find(Point candidate) {
+        for (Point point : points) {
+            if ((candidate.getX() == point.getX() && candidate.getY() == point.getY()) || point.getLabel().equals(candidate.getLabel()))
+                return true;
+        }
+        return false;
+    }
+
+    boolean remove(Point candidate) {
+        if (!find(candidate)) return false;
+        System.out.printf("Removing point %s from %s\n", candidate, label);
+        return points.remove(candidate);
+    }
+
     abstract boolean inRange(Point point);
+
+    void update(Operation operation, Point point) {
+        switch (operation) {
+            case ADD -> add(point);
+            case REMOVE -> remove(point);
+        }
+    }
 
     boolean checkIfExits(Point point) {
         for (Point p : points) {

@@ -2,146 +2,41 @@ package com.geometry.graph;
 
 import com.geometry.utils.Range;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
-    private static final Container FIRST_QUADRANT = new Quadrant("first", new Range(0, Integer.MAX_VALUE), new Range(0, Integer.MAX_VALUE));
-    private static final Container SECOND_QUADRANT = new Quadrant("second", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MAX_VALUE, 0));
-    private static final Container THIRD_QUADRANT = new Quadrant("third", new Range(Integer.MIN_VALUE, 0), new Range(Integer.MIN_VALUE, 0));
-    private static final Container FOURTH_QUADRANT = new Quadrant("fourth", new Range(0, Integer.MAX_VALUE), new Range(Integer.MIN_VALUE, 0));
-    private static final Container X_AXIS = new Axis("X", new Range(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    private static final Container Y_AXIS = new Axis("Y", new Range(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    private String label;
+    private static final Point origin = new Point(0, 0, "origin");
+    private final Map<ContainerLabel, Container> containers;
     private final List<Point> points;
+    private String label;
 
     public Graph(String label) {
         this.label = label;
         points = new LinkedList<>();
+        points.add(origin);
+        containers = new HashMap<>(){{
+            put(ContainerLabel.FIRST_QUADRANT, new Quadrant(ContainerLabel.FIRST_QUADRANT, new Range(0, Integer.MAX_VALUE), new Range(0, Integer.MAX_VALUE)));
+            put(ContainerLabel.SECOND_QUADRANT, new Quadrant(ContainerLabel.SECOND_QUADRANT, new Range(Integer.MIN_VALUE, 0), new Range(Integer.MAX_VALUE, 0)));
+            put(ContainerLabel.THIRD_QUADRANT, new Quadrant(ContainerLabel.THIRD_QUADRANT, new Range(Integer.MIN_VALUE, 0), new Range(Integer.MIN_VALUE, 0)));
+            put(ContainerLabel.FOURTH_QUADRANT, new Quadrant(ContainerLabel.FOURTH_QUADRANT, new Range(0, Integer.MAX_VALUE), new Range(Integer.MIN_VALUE, 0)));
+            put(ContainerLabel.X_AXIS, new Axis(ContainerLabel.X_AXIS, new Range(Integer.MIN_VALUE, Integer.MAX_VALUE)));
+            put(ContainerLabel.Y_AXIS, new Axis(ContainerLabel.Y_AXIS, new Range(Integer.MIN_VALUE, Integer.MAX_VALUE)));
+        }};
     }
 
     public Point addPoint(double x, double y, String label) {
-        Point newPoint = new Point(x, y, label);
-        Container container = findContainer(newPoint);
-        if (!container.checkIfExits(newPoint)) {
-            container.points.add(newPoint);
-            points.add(newPoint);
-            System.out.printf("Successfully added %s in %s\n", newPoint, container);
-            return newPoint;
+        if (find(x, y, label) == null) {
+            Point point = new Point(x, y, label);
+            points.add(point);
+            notifyAll(Operation.ADD, point);
+            return point;
         }
-
-        System.out.printf("Adding %s failed\n", newPoint);
+        System.out.printf("Adding point with x: %.2f, y: %.2f, label: %s failed\n", x, y, label);
         return null;
     }
 
     public Point addPoint(double x, double y) {
         return addPoint(x, y, String.format("unnamed_%d", getPoints().size()));
-    }
-
-    private Container findContainer(Point point) {
-        Container found = null;
-        if (FIRST_QUADRANT.inRange(point))
-            found = FIRST_QUADRANT;
-        else if (SECOND_QUADRANT.inRange(point))
-            found = SECOND_QUADRANT;
-        else if (THIRD_QUADRANT.inRange(point))
-            found = THIRD_QUADRANT;
-        else if (FOURTH_QUADRANT.inRange(point))
-            found = FOURTH_QUADRANT;
-        else if (X_AXIS.inRange(point))
-            found = X_AXIS;
-        else if (Y_AXIS.inRange(point))
-            found = Y_AXIS;
-
-        return found;
-    }
-
-    public Point findPoint(double x, double y) {
-        for (Point p : points) {
-            if (p.getX() == x && p.getY() == y)
-                return p;
-        }
-
-        return null;
-    }
-
-    public Point findPoint(String label) {
-        for (Point p : points) {
-            if (p.getLabel().equals(label))
-                return p;
-        }
-
-        return null;
-    }
-
-    public Point findPoint(Point point) {
-        return points.contains(point) ? point : null;
-    }
-
-    public Point movePoint(double x, double y, double newX, double newY) {
-        Point found = findPoint(x, y);
-        if (found != null) {
-            removePoint(x, y);
-            return addPoint(newX, newY, found.getLabel());
-        }
-        return addPoint(newX, newY);
-    }
-
-    Point pop(Point point) {
-        Point found = findPoint(point);
-        if (found != null) {
-            points.remove(found);
-            Container container = findContainer(found);
-            container.points.remove(found);
-            System.out.printf("Successfully removed %s from %s\n", found, container);
-
-        }
-        return found;
-    }
-
-    public boolean removePoint(String label) {
-        Point found = findPoint(label);
-        return pop(found) != null;
-    }
-
-    public boolean removePoint(Point point) {
-        return pop(point) != null;
-    }
-
-    public boolean removePoint(double x, double y) {
-        Point found = findPoint(x, y);
-        return pop(found) != null;
-    }
-
-    public double distanceBetween(double x1, double y1, double x2, double y2) {
-        return Math.sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
-    }
-
-    public double distanceBetween(Point p1, Point p2) {
-        return distanceBetween(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-    }
-
-    public double distanceBetween(Point point) {
-        return distanceBetween(point.getX(), point.getY(), 0, 0);
-    }
-
-    public double distanceBetween(String label) {
-        Point found = findPoint(label);
-        if (found != null)
-            return distanceBetween(found.getX(), found.getY(), 0, 0);
-        return -1D;
-    }
-
-    public double distanceBetween(String labelOne, String labelTwo) {
-        Point foundOne = findPoint(labelOne);
-        Point foundTwo = findPoint(labelTwo);
-        if (foundOne != null && foundTwo != null)
-            return distanceBetween(foundOne.getX(), foundOne.getY(), foundTwo.getX(), foundTwo.getY());
-        return -1D;
-    }
-
-    public double distanceBetween(double x, double y) {
-        return distanceBetween(x, y, 0, 0);
     }
 
     public String getLabel() {
@@ -154,5 +49,49 @@ public class Graph {
 
     public List<Point> getPoints() {
         return points;
+    }
+
+    public Point find(double x, double y, String label) {
+        for (Point point : points) {
+            if ((point.getX() == x && point.getY() == y)
+                    || (point.getLabel().equals(label)))
+                return point;
+        }
+        return null;
+    }
+
+    public Point find(double x, double y) {
+        return find(x, y, "");
+    }
+
+    public Point find(Point point) {
+        return find(point.getX(), point.getY(), point.getLabel());
+    }
+
+    public boolean remove(Point point) {
+        Point found = find(point);
+        if (found != null) {
+            points.remove(found);
+            notifyAll(Operation.REMOVE, found);
+        }
+        return found != null;
+    }
+
+    public boolean move(Point point, double newX, double newY) {
+        if (remove(point))
+            return addPoint(newX, newY, point.getLabel()) != null;
+        return false;
+    }
+
+    public void notifyAll(Operation operation, Point point) {
+        for (Container container : containers.values())
+            container.update(operation, point);
+    }
+
+    public void print() {
+        System.out.println("******************************************************");
+        for (Container container : containers.values())
+            System.out.printf("%s: points: %s\n", container.label, container.points);
+        System.out.println("******************************************************");
     }
 }
