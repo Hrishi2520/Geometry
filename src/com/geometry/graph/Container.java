@@ -20,7 +20,8 @@ abstract class Container {
 
     boolean find(Point candidate) {
         for (Point point : points) {
-            if ((candidate.getX() == point.getX() && candidate.getY() == point.getY()) || point.getLabel().equals(candidate.getLabel()))
+            if ((candidate.getX() == point.getX() && candidate.getY() == point.getY())
+                    || point.getLabel().equals(candidate.getLabel()))
                 return true;
         }
         return false;
@@ -39,20 +40,5 @@ abstract class Container {
             case ADD -> add(point);
             case REMOVE -> remove(point);
         }
-    }
-
-    boolean checkIfExits(Point point) {
-        for (Point p : points) {
-            if (p.getLabel().equals(point.getLabel())) {
-                System.out.printf("Found %s with same label as %s\n", point, p);
-                return true;
-            }
-
-            if (p.getX() == point.getX() && p.getY() == point.getY()) {
-                System.out.printf("Found %s with same co-ordinates as %s\n", point, p);
-                return true;
-            }
-        }
-        return false;
     }
 }

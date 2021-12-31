@@ -24,7 +24,7 @@ public class Graph {
         }};
     }
 
-    public Point addPoint(double x, double y, String label) {
+    public Point add(double x, double y, String label) {
         if (find(x, y, label) == null) {
             Point point = new Point(x, y, label);
             points.add(point);
@@ -35,8 +35,8 @@ public class Graph {
         return null;
     }
 
-    public Point addPoint(double x, double y) {
-        return addPoint(x, y, String.format("unnamed_%d", getPoints().size()));
+    public Point add(double x, double y) {
+        return add(x, y, String.format("unnamed_%d", getPoints().size()));
     }
 
     public String getLabel() {
@@ -79,7 +79,7 @@ public class Graph {
 
     public boolean move(Point point, double newX, double newY) {
         if (remove(point))
-            return addPoint(newX, newY, point.getLabel()) != null;
+            return add(newX, newY, point.getLabel()) != null;
         return false;
     }
 
